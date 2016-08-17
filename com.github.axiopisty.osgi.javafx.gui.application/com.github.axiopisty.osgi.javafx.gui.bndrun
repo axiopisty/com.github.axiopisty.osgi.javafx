@@ -1,27 +1,28 @@
 #
-#  APPLICATION
+#  RUN SPECIFICATION
 #
 
-Bundle-Version: 1.0.0.${tstamp}
-Bundle-Description: Test javafx.launcher.api service
 
-Private-Package:  \
-	com.github.axiopisty.osgi.javafx.launcher.application
+Bundle-Version:				1.0.0.${tstamp}
+Bundle-SymbolicName:		com.github.axiopisty.osgi.javafx.gui.application.launch
+JPM-Command:					gui
 
-EnRoute-Application: 	com.github.axiopisty.osgi.javafx.launcher
-JPM-Command:			launchr
 
--includeresource: \
-	{readme.md}, \
-	{configuration=configuration}
+-runfw:						org.eclipse.osgi
 
--buildpath: \
-	osgi.enroute.base.api,\
-	com.github.axiopisty.osgi.javafx.launcher.api;version=latest
+-runrequires:  \
+	osgi.identity;filter:='(osgi.identity=com.github.axiopisty.osgi.javafx.gui.application)'
+
+-runbundles: \
+	com.github.axiopisty.osgi.javafx.gui.application;version=snapshot,\
+	com.github.axiopisty.osgi.javafx.launcher.provider;version=snapshot,\
+	org.apache.felix.configadmin;version='[1.8.6,1.8.7)',\
+	org.apache.felix.log;version='[1.0.1,1.0.2)',\
+	org.apache.felix.scr;version='[2.0.0,2.0.1)',\
+	org.eclipse.equinox.metatype;version='[1.4.100,1.4.101)',\
+	org.osgi.service.metatype;version='[1.3.0,1.3.1)'
+
 	
--testpath: \
-	osgi.enroute.junit.wrapper;version=4.12
-
 -runsystempackages: \
 	javafx.animation \
 	, javafx.application \
@@ -58,5 +59,6 @@ JPM-Command:			launchr
 	, javafx.stage \
 	, javafx.util \
 	, javafx.util.converter \
-	, netscape.javascript
--runbundles: org.apache.felix.log;version='[1.0.1,1.0.2)'
+	, netscape.javascript \
+	, com.sun.javafx.scene.control.skin.modena
+	

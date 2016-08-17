@@ -1,0 +1,25 @@
+#
+#  APPLICATION
+#
+
+Bundle-Version: 1.0.0.${tstamp}
+Bundle-Description: This is a JavaFX Gui application.
+
+Private-Package:  \
+	com.github.axiopisty.osgi.javafx.gui.application
+
+EnRoute-Application: 	com.github.axiopisty.osgi.javafx.gui
+JPM-Command:			gui
+
+-includeresource: \
+	{readme.md}, \
+	{configuration=configuration}, \
+	{static=static}, \
+	web=web
+
+-buildpath: \
+	osgi.enroute.base.api,\
+	com.github.axiopisty.osgi.javafx.launcher.api;version=latest
+	
+-testpath: \
+	osgi.enroute.junit.wrapper;version=4.12

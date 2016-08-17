@@ -2,7 +2,6 @@ package com.github.axiopisty.osgi.javafx.launcher.provider;
 
 import java.util.Map;
 import java.util.concurrent.Executors;
-import java.util.concurrent.atomic.AtomicReference;
 
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;

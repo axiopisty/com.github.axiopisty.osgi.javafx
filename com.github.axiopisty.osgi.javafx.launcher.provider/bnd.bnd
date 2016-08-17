@@ -10,6 +10,10 @@ Bundle-Description: A component which launches a JavaFX application and provides
 Private-Package:  \
 	com.github.axiopisty.osgi.javafx.launcher.provider
 	
+Provide-Capability: osgi.service;objectClass="com.github.axiopisty.osgi.javafx.launcher.api.StageService"
+
+Export-Package: com.github.axiopisty.osgi.javafx.launcher.api	
+
 -buildpath: \
 	osgi.enroute.base.api;version=1.0,\
 	com.github.axiopisty.osgi.javafx.launcher.api;version=latest
@@ -70,4 +74,3 @@ Private-Package:  \
 	, javafx.util.converter \
 	, netscape.javascript
 	
-Export-Package: com.github.axiopisty.osgi.javafx.launcher.api
