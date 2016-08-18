@@ -9,10 +9,11 @@ Bundle-Description: A component which launches a JavaFX application and provides
 
 Private-Package:  \
 	com.github.axiopisty.osgi.javafx.launcher.provider
-	
-Provide-Capability: osgi.service;objectClass="com.github.axiopisty.osgi.javafx.launcher.api.StageService"
 
 Export-Package: com.github.axiopisty.osgi.javafx.launcher.api	
+
+Provide-Capability: \
+	osgi.service;objectClass:List<String>="com.github.axiopisty.osgi.javafx.launcher.api.StageService"
 
 -buildpath: \
 	osgi.enroute.base.api;version=1.0,\
@@ -20,9 +21,6 @@ Export-Package: com.github.axiopisty.osgi.javafx.launcher.api
 	
 -testpath: \
 	osgi.enroute.junit.wrapper;version=4.12
-
--includeresource: {readme.md}
-
 
 -runrequires:  \
 	osgi.identity;filter:='(osgi.identity=com.github.axiopisty.osgi.javafx.launcher.provider)'
@@ -34,43 +32,9 @@ Export-Package: com.github.axiopisty.osgi.javafx.launcher.api
 	org.apache.felix.scr;version='[2.0.0,2.0.1)',\
 	org.eclipse.equinox.metatype;version='[1.4.100,1.4.101)',\
 	org.osgi.service.metatype;version='[1.3.0,1.3.1)'
-
 	
 -runsystempackages: \
-	javafx.animation \
-	, javafx.application \
-	, javafx.beans \
-	, javafx.beans.binding \
-	, javafx.beans.property \
-	, javafx.beans.property.adapter \
-	, javafx.beans.value \
-	, javafx.collections \
-	, javafx.collections.transformation \
-	, javafx.concurrent \
-	, javafx.css \
-	, javafx.embed.swing \
-	, javafx.embed.swt \
+	javafx.application \
 	, javafx.event \
-	, javafx.fxml \
-	, javafx.geometry \
-	, javafx.print \
-	, javafx.scene \
-	, javafx.scene.canvas \
-	, javafx.scene.chart \
-	, javafx.scene.control \
-	, javafx.scene.control.cell \
-	, javafx.scene.effect \
-	, javafx.scene.image \
-	, javafx.scene.input \
-	, javafx.scene.layout \
-	, javafx.scene.media \
-	, javafx.scene.paint \
-	, javafx.scene.shape \
-	, javafx.scene.text \
-	, javafx.scene.transform \
-	, javafx.scene.web \
-	, javafx.stage \
-	, javafx.util \
-	, javafx.util.converter \
-	, netscape.javascript
+	, javafx.stage
 	

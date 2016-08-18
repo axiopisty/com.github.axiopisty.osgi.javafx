@@ -1,13 +1,12 @@
 package com.github.axiopisty.osgi.javafx.launcher.provider;
 
-import java.util.Map;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.osgi.framework.Bundle;
-import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.FrameworkUtil;
-import org.osgi.service.component.ComponentContext;
+import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
@@ -51,6 +50,10 @@ import javafx.stage.Stage;
  * {@link http://paulonjava.blogspot.com/2014/11/making-javafx-better-with-osgi.html}
  * but it is modified to use the OSGi SCR annotations instead of the
  * Apache Felix DM.
+ * 
+ * SEE: {@link http://stackoverflow.com/a/39011490/328275} regarding 
+ *      components that need to be manually registered with the
+ *      service registry. 
  */
 @Component(
 	name = "com.github.axiopisty.osgi.javafx.launcher", 
@@ -61,6 +64,8 @@ public class Main extends Application {
 	
 	@Reference
 	LogService log;
+	
+	private final AtomicReference<ServiceRegistration<StageService>> serviceRef = new AtomicReference<>();
 
 	/**
 	 * This method is invoked by the SCR when this component is
@@ -77,7 +82,7 @@ public class Main extends Application {
 	 * shutting down.  
 	 */
 	@Activate
-	void activate(ComponentContext cc, BundleContext bc, Map<String, Object> config) {
+	void activate() {
 		final Thread t = Executors.defaultThreadFactory().newThread(() -> {
 			log.log(LogService.LOG_INFO, "Starting the JavaFX application.");
 			Platform.setImplicitExit(false);
@@ -94,8 +99,9 @@ public class Main extends Application {
 	 * and the OSGi container.
 	 */
 	@Deactivate
-	void deactivate(ComponentContext cc, BundleContext bc, Map<String, Object> config) {
+	void deactivate() {
 		log.log(LogService.LOG_INFO, "Stopping the JavaFX application and the OSGi container.");
+		unregisterStageService();
 		Platform.exit();
 		try {
 			// Stopping bundle 0 will cause the OSGi container to shutdown
@@ -124,10 +130,59 @@ public class Main extends Application {
 				log.log(LogService.LOG_WARNING, e.getMessage(), e);
 			}
 		});
-		
-		bundle()
-			.getBundleContext()
-			.registerService(StageService.class, new StageProvider(primaryStage), null);
+
+		// Note we register the service from the JavaFX Application 
+		// Thread, not the thread the SCR used to activate this 
+		// component.
+		registerStageService(primaryStage);
+	}
+	
+	/**
+	 * This method manually registers the StageService in the service registry.
+	 * Because of this, the "Provides-Capability" OSGi header must also be
+	 * set manually. See how that is done in the bnd.bnd file.
+	 * 
+	 * SEE: {@link SEE: http://stackoverflow.com/questions/39004498/how-to-programmatically-register-a-service-in-the-scr-using-osgi-standard-featur}
+	 * 
+	 * Manually registering services in the service registry should be avoided.
+	 * There are rare circumstances however when it is necessary to manually
+	 * register a service. This is one of those cases. The JavaFX application
+	 * needs to run in a background thread. The StageService will be registered
+	 * at some point in time after this component is activated from the JavaFX
+	 * Application Thread. So that's what this method does.
+	 * 
+	 * NB: The build tab in the bnd.bnd file editor shows a warning stating that:
+	 *     
+	 *     "The servicefactory:=true directive is set but no service is provided, ignoring it"
+	 *     
+	 *     This is occurring because we are manually registering the service
+	 *     rather than having it set automatically by the {@code @Component}
+	 *     annotation.
+	 */
+	private void registerStageService(Stage primaryStage) {
+		serviceRef.compareAndSet(
+				null,
+				bundle()
+					.getBundleContext()
+					.registerService(StageService.class, new StageProvider(primaryStage), null)
+			);
+	}
+	
+	/**
+	 * Since this component manually registers the StageService in the service
+	 * registry, it must also unregister the service if the component is
+	 * deactivated. So that's what this method does.
+	 */
+	private void unregisterStageService() {
+		ServiceRegistration<StageService> stageService = serviceRef.get();
+		if(stageService != null) {
+			try {
+				stageService.unregister();
+			} catch (IllegalStateException ise) {
+				// We just wanted to make sure the service is not registered.
+				// It's not, so just move on.
+			}
+		}
 	}
 	
 	private Bundle bundle() {

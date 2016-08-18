@@ -1,6 +1,11 @@
 package com.github.axiopisty.osgi.javafx.gui.application;
 
 import org.osgi.service.component.annotations.Component;
+
+import java.net.URL;
+
+import org.osgi.framework.Bundle;
+import org.osgi.framework.FrameworkUtil;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
@@ -41,9 +46,26 @@ public class Gui {
 			StackPane root = new StackPane();
 			root.getChildren().add(btn);
 			Scene scene = new Scene(root, 300, 250);
+			javafxOsgiHack(scene);
 			primaryStage.setScene(scene);
 		});
 		show();
+	}
+	
+	/**
+	 * This hack is used to get the CSS styles to work appropriately inside the OSGi environment.
+	 * I'm not sure why this is needed, but without it, the css file is not loaded and the 
+	 * following warning is displayed in the console:
+	 * 
+	 * com.sun.javafx.css.StyleManager loadStylesheetUnPrivileged
+	 * WARNING: Resource "com/sun/javafx/scene/control/skin/modena/modena.css" not found.
+	 * 
+	 * @param scene
+	 */
+	private void javafxOsgiHack(Scene scene) {
+		Bundle systemBundle = FrameworkUtil.getBundle(getClass()).getBundleContext().getBundle(0);
+		URL modena = systemBundle.getResource("com/sun/javafx/scene/control/skin/modena/modena.css");
+		scene.getStylesheets().add(modena.toExternalForm());
 	}
 	
 	@Deactivate

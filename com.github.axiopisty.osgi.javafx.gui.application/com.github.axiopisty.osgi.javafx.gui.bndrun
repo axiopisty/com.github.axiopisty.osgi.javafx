@@ -7,6 +7,9 @@ Bundle-Version:				1.0.0.${tstamp}
 Bundle-SymbolicName:		com.github.axiopisty.osgi.javafx.gui.application.launch
 JPM-Command:					gui
 
+Import-Package: \
+	com.sun.javafx.scene.control.skin.modena,\
+	*
 
 -runfw:						org.eclipse.osgi
 
