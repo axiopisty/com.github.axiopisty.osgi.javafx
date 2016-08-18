@@ -60,6 +60,8 @@ public class Gui {
 	 * com.sun.javafx.css.StyleManager loadStylesheetUnPrivileged
 	 * WARNING: Resource "com/sun/javafx/scene/control/skin/modena/modena.css" not found.
 	 * 
+	 * {@link http://stackoverflow.com/q/30550688/328275}
+	 * 
 	 * @param scene
 	 */
 	private void javafxOsgiHack(Scene scene) {
